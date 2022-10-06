@@ -1,4 +1,4 @@
-tvcs = MarketMaker ProxyNotify StockNotify
+tvcs = marketmaker proxynotify stocknotify
 tvcc = MMClient
 clean:
 	rm -f *.tvc *.abi.json
