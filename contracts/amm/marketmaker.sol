@@ -11,57 +11,119 @@ pragma AbiHeader pubkey;
 
 import "./modifiers/modifiers.sol";
 
+struct Wallet {
+    address wallet;
+    uint128 balance;
+    uint8 decimals;
+}
+
+struct Order {
+    address wallet;
+    uint128 price;
+}
+
 contract MarketMaker  is Modifiers {
     string constant version = "0.0.1";
-    TvmCell m_WalletCode;
-    address _FlexWallet1;
-    address _FlexWallet2;
+    Wallet _FlexWallet1;
+    Wallet _FlexWallet2;
+    TvmCell m_PriceCode;
     
-    constructor() public accept {
+    uint128 _numberOrders = 3;
+    uint128 _stepPrice;
+    uint128[] fibNumber;
+    uint128[] sumFib;
+    Order[] _price;
+    
+    constructor() public onlyOwner accept {
+        init();
     }
-
-    function deployFirstWallet() public onlyOwner accept {
     
+    function init() private {
+        uint128 sum = 2;
+        fibNumber.push(1);
+        fibNumber.push(1);
+        sumFib.push(1);
+        sumFib.push(2);
+        for (uint128 i = 2; i < 20; i++){
+            fibNumber.push(fibNumber[i - 1] + fibNumber[i - 2]);
+            sum += fibNumber[i];
+            sumFib.push(sum);
+        }
+    }
+        
+    function _innerPrice() private view returns(uint128) {
+        return (_FlexWallet1.balance * _FlexWallet1.decimals) / _FlexWallet2.balance;
+    }
+         
+    function setFirstWallet (address wallet, uint128 balance, uint8 decimals) public  onlyOwner accept {
+    	_FlexWallet1.wallet = wallet;
+    	_FlexWallet1.balance = balance;
+    	_FlexWallet1.decimals = decimals;
+    } 
+    
+    function setSecondWallet (address wallet, uint128 balance, uint8 decimals) public  onlyOwner accept {
+    	_FlexWallet2.wallet = wallet;
+    	_FlexWallet2.balance = balance;
+    	_FlexWallet2.decimals = decimals;
+    } 
+    
+    function getPriceSalt() private view returns(TvmCell) {
+        return m_PriceCode;
     }
     
-    function deploySecondWallet() public onlyOwner accept {
-    
+    function makeOrders() public onlyOwner accept {
+        for (uint128 i = _numberOrders; i >= 1; i--){
+            uint128 nowPrice = _innerPrice() + _stepPrice * i;
+            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet1.balance / 10;
+            nowOrder /= sumFib[_numberOrders - 1];
+            _deployOrder(Order(_FlexWallet1.wallet, nowPrice), nowOrder);
+            _price.push(Order(_FlexWallet1.wallet, nowPrice));
+        }
+        for (uint128 i = _numberOrders; i >= 1; i--){
+            int128 nowPrice_t = int128(_innerPrice()) - int128(_stepPrice) * int128(i);
+            if (nowPrice_t < 0){
+                continue;
+            }
+            uint128 nowPrice = uint128(nowPrice_t);
+            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet2.balance / 10;
+            nowOrder /= sumFib[_numberOrders - 1];
+            _deployOrder(Order(_FlexWallet2.wallet, nowPrice), nowOrder);
+            _price.push(Order(_FlexWallet2.wallet, nowPrice));
+        }
     }
     
-    function deployOrder() public onlyOwner accept {
-//        _deployOrder();
+    function removeOrders() public onlyOwner accept {
+        for (int128 i = 0; i <= int128(_price.length) - 1; i++){
+            _cancelOrder(_price[uint128(i)]);
+        }
+        delete _price;
+    }
+    
+    function deployOrder(Order price_num, uint128 amount) public view onlyOwner accept {
+        _deployOrder(price_num, amount);
     } 
     
     function _deployOrder(
-    	bool    sell,
-    	bool    immediate_client,
-    	bool    post_order,
-    	uint128 price_num,
-    	uint128 amount,
-    	uint128 lend_amount,
-    	uint32  lend_finish_time,
-    	uint128 evers,
-    	TvmCell    unsalted_price_code,
-    	TvmCell    price_salt,
-    	address my_tip3_addr,
-    	uint256 user_id,
-    	uint256 order_id) private {
-    	FlexLendPayloadArgs args = FlexLendPayloadArgs (sell, immediate_client, post_order, amount, address(this), user_id, order_id);
-    	AFlexWallet(my_tip3_addr).makeOrder(uint32(0), address(this), uint128(0), lend_amount, lend_finish_time, price_num, unsalted_price_code, price_salt, args);   
+    	Order price_num,
+    	uint128 amount) private view {
+    	uint32 m_dealTime =  uint32(1);
+        m_dealTime =uint32(now + m_dealTime * 60 * 60);
+    	FlexLendPayloadArgs args = FlexLendPayloadArgs (true, false, false, amount, address(this), uint256(0), uint256(0));
+    	uint128 lend_amount = price_num.price * amount;
+    	AFlexWallet(price_num.wallet).makeOrder(uint32(0), address(this), uint128(0), lend_amount, m_dealTime, price_num.price, m_PriceCode, getPriceSalt(), args);   
     } 
     
-    function cancelOrder() public onlyOwner accept {
-//        _cancelOrder();
+    function cancelOrder( 
+    	Order      price
+    ) public view onlyOwner accept {
+        _cancelOrder(price);
     } 
     
-    function _cancelOrder(    
-    	uint128      evers,
-    	address      price,
-    	bool         sell,
-    	optional(uint256) order_id,
-    	address my_tip3_addr
-    ) private {
-        AFlexWallet(my_tip3_addr).cancelOrder(evers, price, sell, order_id);   
+    function _cancelOrder(  
+    	Order price
+    ) private pure {
+    	optional(uint256) order_id;
+        AFlexWallet(price.wallet).cancelOrder(5 ton, price.wallet/*TRWETWEGVWEVEV*/, true, order_id);   
     }
 
     
@@ -71,12 +133,17 @@ contract MarketMaker  is Modifiers {
 
     /* Setters */
     
-    function onCodeUpgrade() private {
-        
+    function setPriceCode(TvmCell code) public onlyOwner accept {
+        m_PriceCode = code;
     }
     
-    function setWalletCode(TvmCell code)  public onlyOwner accept {
-    	m_WalletCode = code;
+    function setConfig(uint128 step, uint128 number) public onlyOwner accept {
+        _numberOrders = number;
+        _stepPrice = step;
+    }
+    
+    function onCodeUpgrade() private {
+        
     }
 
     /* fallback/receive */

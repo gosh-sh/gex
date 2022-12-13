@@ -8,6 +8,23 @@ pragma ton-solidity >=0.64.0;
 
 import "errors.sol";
 
+abstract contract AMSig {
+    function sendTransaction(
+        address dest,
+        uint128 value,
+        bool bounce,
+        bool allBalance,
+        TvmCell payload)
+    public {}
+    function submitTransaction(
+        address dest,
+        uint128 value,
+        bool bounce,
+        bool allBalance,
+        TvmCell payload)
+    public returns (uint64 transId) {}
+}
+
 abstract contract AFlexWallet {
     function cancelOrder(
         uint128 evers,
