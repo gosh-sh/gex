@@ -7,56 +7,31 @@
 pragma ton-solidity >=0.64.0;
 
 import "errors.sol";
-
-abstract contract AMSig {
-    function sendTransaction(
-        address dest,
-        uint128 value,
-        bool bounce,
-        bool allBalance,
-        TvmCell payload)
-    public {}
-    function submitTransaction(
-        address dest,
-        uint128 value,
-        bool bounce,
-        bool allBalance,
-        TvmCell payload)
-    public returns (uint64 transId) {}
-}
-
-abstract contract AFlexWallet {
-    function cancelOrder(
-        uint128 evers,
-        address price,
-        bool sell,
-        optional(uint256) order_id
-    ) public functionID(0x11) {}
-
-    function makeOrder(
-        uint32 _answer_id,
-        optional(address) answer_addr,
-        uint128 evers,
-        uint128 lend_balance,
-        uint32 lend_finish_time,
-        uint128 price_num,
-        TvmCell unsalted_price_code,
-        TvmCell salt,
-        FlexLendPayloadArgs args
-    ) public functionID(0x10) {}
-}
+import "../../abstract/AFlexClient.sol";
+import "../../abstract/AFlexWallet.sol";
+import "../../abstract/AWrapper.sol";
+import "../../abstract/ABroxusTokenWallet.sol";
 
 //Structs
-struct FlexLendPayloadArgs {
-    bool sell;               ///< Sell order if true, buy order if false.
-    bool immediate_client;   ///< Should this order try to be executed as a client order first
-                                ///<  (find existing corresponding orders).
-    bool  post_order;         ///< Should this order be enqueued if it doesn't already have corresponding orders.
-    uint128  amount;             ///< Amount of major tokens to buy or sell.
-    address  client_addr;        ///< Client contract address. PriceXchg will execute cancels from this address,
-                                ///<  send notifications and return the remaining native funds (evers) to this address.
-    uint256  user_id;            ///< User id. It is trader wallet's pubkey. Receiving wallet credentials will be { pubkey: user_id, owner: client_addr }.
-    uint256  order_id;           ///< Order id for client purposes.
+struct Wallet {
+    address wallet;
+    uint128 balance;
+    uint8 decimals;
+}
+
+struct Order {
+    uint128 index;
+    uint128 price;
+}
+
+struct DPriceXchgCustom {
+    uint128 price_num_;    
+    uint128 sells_amount_; 
+    uint128 buys_amount_; 
+    uint32 len0;
+    mapping(uint => uint) map0;
+    uint32 len1;
+    mapping(uint => uint) map1;
 }
 
 abstract contract Modifiers is Errors {    

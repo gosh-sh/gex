@@ -10,7 +10,7 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -22,13 +22,29 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 38
+.loc modifiers/modifiers.sol, 0
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.macro init
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 33
+ENDS
+.loc marketmaker.sol, 0
 CALLREF {
 	CALL $init_e1c7392a_internal_macro$
 }
-.loc modifiers/modifiers.sol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -39,9 +55,33 @@ THROW 0
 CALL $init_e1c7392a_internal_macro$
 
 .macro init_e1c7392a_internal_macro
-.loc marketmaker.sol, 42
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 34
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 15
+.loc marketmaker.sol, 35
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 16
+.loc marketmaker.sol, 36
 PUSHINT 2
-.loc marketmaker.sol, 43
+.loc marketmaker.sol, 37
 GETGLOB 15
 PUSHINT 1
 NEWC
@@ -56,7 +96,7 @@ DICTUSETB
 PAIR
 DUP
 SETGLOB 15
-.loc marketmaker.sol, 44
+.loc marketmaker.sol, 38
 PUSHINT 1
 NEWC
 STU 128
@@ -69,7 +109,7 @@ PUSHINT 32
 DICTUSETB
 PAIR
 SETGLOB 15
-.loc marketmaker.sol, 45
+.loc marketmaker.sol, 39
 GETGLOB 16
 PUSHINT 1
 NEWC
@@ -84,7 +124,7 @@ DICTUSETB
 PAIR
 DUP
 SETGLOB 16
-.loc marketmaker.sol, 46
+.loc marketmaker.sol, 40
 PUSHINT 2
 NEWC
 STU 128
@@ -97,14 +137,14 @@ PUSHINT 32
 DICTUSETB
 PAIR
 SETGLOB 16
-.loc marketmaker.sol, 47
+.loc marketmaker.sol, 41
 PUSHINT 2
 PUSHCONT {
 	DUP
 	LESSINT 20
 }
 PUSHCONT {
-	.loc marketmaker.sol, 48
+	.loc marketmaker.sol, 42
 	GETGLOB 15
 	OVER
 	DEC
@@ -137,7 +177,7 @@ PUSHCONT {
 	DICTUSETB
 	PAIR
 	SETGLOB 15
-	.loc marketmaker.sol, 49
+	.loc marketmaker.sol, 43
 	DUP
 	GETGLOB 15
 	SECOND
@@ -149,7 +189,7 @@ PUSHCONT {
 	ADD
 	UFITS 128
 	POP S2
-	.loc marketmaker.sol, 50
+	.loc marketmaker.sol, 44
 	GETGLOB 16
 	PUSH S2
 	NEWC
@@ -163,7 +203,7 @@ PUSHCONT {
 	DICTUSETB
 	PAIR
 	SETGLOB 16
-	.loc marketmaker.sol, 47
+	.loc marketmaker.sol, 41
 	INC
 	UFITS 128
 	.loc marketmaker.sol, 0
@@ -177,19 +217,42 @@ DROP2
 CALL $_innerPrice_f88151c7_internal_macro$
 
 .macro _innerPrice_f88151c7_internal_macro
-.loc marketmaker.sol, 55
-GETGLOB 10
+.loc marketmaker.sol, 49
+PUSHINT 0
+GETGLOB 20
 SECOND
-GETGLOB 10
-THIRD
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
+SECOND
+GETGLOB 19
 MUL
 UFITS 128
-GETGLOB 11
+PUSHINT 1
+GETGLOB 20
+SECOND
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
 SECOND
 DIV
 .loc marketmaker.sol, 0
 
-.macro setFirstWallet
+.macro setFlexClient
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -198,64 +261,137 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc marketmaker.sol, 52
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDMSGADDR
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $setFlexClient_d247e7dd_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	setFlexClient_d247e7dd_internal
+.type	setFlexClient_d247e7dd_internal, @function
+CALL $setFlexClient_d247e7dd_internal_macro$
+
+.macro setFlexClient_d247e7dd_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 53
+SETGLOB 10
+.loc marketmaker.sol, 0
+
+.globl	getLendSellAmount_24f0c148_internal
+.type	getLendSellAmount_24f0c148_internal, @function
+CALL $getLendSellAmount_24f0c148_internal_macro$
+
+.macro getLendSellAmount_24f0c148_internal_macro
+.loc marketmaker.sol, 57
+XCHG S2
 .loc marketmaker.sol, 58
-OVER
+EQINT 1
 PUSHCONT {
-	LDREF
-	ENDS
-	CTOS
+	.loc marketmaker.sol, 58
+	OVER
+	MUL
+	UFITS 128
+	GETGLOB 19
+	DIV
+	INC
+	UFITS 128
+	.loc marketmaker.sol, 0
 }
 IF
-LDMSGADDR
-LDU 128
-LDU 8
-ENDS
-.loc marketmaker.sol, 0
-CALLREF {
-	CALL $setFirstWallet_094b7de3_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-THROW 0
-
-.globl	setFirstWallet_094b7de3_internal
-.type	setFirstWallet_094b7de3_internal, @function
-CALL $setFirstWallet_094b7de3_internal_macro$
-
-.macro setFirstWallet_094b7de3_internal_macro
-.loc modifiers/modifiers.sol, 69
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-GETGLOB 2
-EQUAL
-THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
-ACCEPT
 .loc marketmaker.sol, 59
-GETGLOB 10
-ROLL 3
-SETINDEX 0
-DUP
-SETGLOB 10
-.loc marketmaker.sol, 60
-ROT
-SETINDEX 1
-DUP
-SETGLOB 10
-.loc marketmaker.sol, 61
-SWAP
-SETINDEX 2
-SETGLOB 10
+PUSHINT 10015
+MUL
+UFITS 128
+PUSHINT 10000
+DIV
+INC
+UFITS 128
+NIP
 .loc marketmaker.sol, 0
 
-.macro setSecondWallet
+.globl	preparePriceXchg_49c313eb_internal
+.type	preparePriceXchg_49c313eb_internal, @function
+CALL $preparePriceXchg_49c313eb_internal_macro$
+
+.macro preparePriceXchg_49c313eb_internal_macro
+.loc marketmaker.sol, 63
+CALLREF {
+	CALL $preparePriceXchgData_326ef661_internal_macro$
+}
+GETGLOB 11
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+.loc marketmaker.sol, 64
+HASHCU
+NEWC
+STSLICECONST x801_
+STU 256
+ENDC
+CTOS
+.loc marketmaker.sol, 0
+
+.globl	preparePriceXchgData_326ef661_internal
+.type	preparePriceXchgData_326ef661_internal, @function
+CALL $preparePriceXchgData_326ef661_internal_macro$
+
+.macro preparePriceXchgData_326ef661_internal_macro
+.loc marketmaker.sol, 68
+NEWDICT
+.loc marketmaker.sol, 69
+SWAP
+PUSHINT 0
+BLKPUSH 2, 0
+PUSH S4
+PUSHINT 0
+ROLL 6
+TUPLE 7
+.loc marketmaker.sol, 71
+NEWC
+SWAP
+UNTUPLE 7
+REVERSE 8, 0
+STU 128
+STU 128
+STU 128
+STU 32
+STDICT
+STU 32
+STDICT
+.loc marketmaker.sol, 72
+ENDC
+.loc marketmaker.sol, 0
+
+.macro setWallet
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -264,7 +400,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 64
+.loc marketmaker.sol, 75
 OVER
 PUSHCONT {
 	LDREF
@@ -278,19 +414,19 @@ LDU 8
 ENDS
 .loc marketmaker.sol, 0
 CALLREF {
-	CALL $setSecondWallet_a9b4a76f_internal_macro$
+	CALL $setWallet_fd3c54db_internal_macro$
 }
 CALLREF {
 	CALL $c7_to_c4$
 }
 THROW 0
 
-.globl	setSecondWallet_a9b4a76f_internal
-.type	setSecondWallet_a9b4a76f_internal, @function
-CALL $setSecondWallet_a9b4a76f_internal_macro$
+.globl	setWallet_fd3c54db_internal
+.type	setWallet_fd3c54db_internal, @function
+CALL $setWallet_fd3c54db_internal_macro$
 
-.macro setSecondWallet_a9b4a76f_internal_macro
-.loc modifiers/modifiers.sol, 69
+.macro setWallet_fd3c54db_internal_macro
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -302,32 +438,308 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 65
-GETGLOB 11
+.loc marketmaker.sol, 77
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+PUSHINT 0
+DUP
+TRIPLE
 ROLL 3
 SETINDEX 0
-DUP
-SETGLOB 11
-.loc marketmaker.sol, 66
+.loc marketmaker.sol, 78
 ROT
 SETINDEX 1
-DUP
-SETGLOB 11
-.loc marketmaker.sol, 67
+.loc marketmaker.sol, 79
 SWAP
 SETINDEX 2
-SETGLOB 11
+.loc marketmaker.sol, 80
+GETGLOB 20
+SWAP
+CALLREF {
+	UNTRIPLE
+	XCHG S2
+	NEWC
+	STSLICE
+	STU 128
+	STU 8
+}
+SWAP
+UNPAIR
+OVER
+INC
+ROLLREV 3
+PUSHINT 32
+DICTUSETB
+PAIR
+SETGLOB 20
 .loc marketmaker.sol, 0
 
-.globl	getPriceSalt_90c36e66_internal
-.type	getPriceSalt_90c36e66_internal, @function
-CALL $getPriceSalt_90c36e66_internal_macro$
+.macro clearWallet
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 83
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $clearWallet_347b1df1_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
 
-.macro getPriceSalt_90c36e66_internal_macro
-.loc marketmaker.sol, 71
-GETGLOB 12
+.globl	clearWallet_347b1df1_internal
+.type	clearWallet_347b1df1_internal, @function
+CALL $clearWallet_347b1df1_internal_macro$
+
+.macro clearWallet_347b1df1_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 84
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 20
+.loc marketmaker.sol, 0
+
+.macro bindWallets
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 87
+OVER
+PUSHCONT {
+	LDI 1
+	LDREF
+	ENDS
+	CTOS
+	LDI 1
+	SWAP
+	NULLSWAPIFNOT
+	PUSHCONT {
+		LDMSGADDR
+		LDU 256
+		ROTREV
+		PAIR
+	}
+	IF
+	SWAP
+	LDI 1
+	LDREF
+	ENDS
+	CTOS
+	LDI 1
+	SWAP
+	NULLROTRIFNOT
+	PUSHCONT {
+		LDU 256
+	}
+	IF
+}
+PUSHCONT {
+	LDI 1
+	LDI 1
+	SWAP
+	NULLSWAPIFNOT
+	PUSHCONT {
+		LDMSGADDR
+		LDU 256
+		ROTREV
+		PAIR
+	}
+	IF
+	SWAP
+	LDI 1
+	LDREF
+	ENDS
+	CTOS
+	LDI 1
+	SWAP
+	NULLROTRIFNOT
+	PUSHCONT {
+		LDU 256
+	}
+	IF
+}
+IFELSE
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $bindWallets_1bb6e177_internal_macro$
+}
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+THROW 0
+
+.globl	bindWallets_1bb6e177_internal
+.type	bindWallets_1bb6e177_internal, @function
+CALL $bindWallets_1bb6e177_internal_macro$
+
+.macro bindWallets_1bb6e177_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 93
+PUSH3 S0, S1, S2
+PUSH S6
+PUSHINT 0
+GETGLOB 20
+SECOND
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
+FIRST
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 2949852426645541256083542794369173188247553
+STUR 143
+ROLLREV 4
+NEWC
+STSLICECONST x00000013
+STI 1
+XCPU S1, S0
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	SWAP
+	UNPAIR
+	XCHG S2
+	STSLICE
+	STU 256
+}
+IFELSE
+STI 1
+NEWC
+ROT
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	STU 256
+}
+IFELSE
+STBREFR
+STBREFR
+ENDC
+PUSHINT 1
+SENDRAWMSG
+.loc marketmaker.sol, 94
+REVERSE 4, 0
+PUSHINT 1
+GETGLOB 20
+SECOND
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
+FIRST
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 2949852426645541256083542794369173188247553
+STUR 143
+ROLLREV 4
+NEWC
+STSLICECONST x00000013
+STI 1
+XCPU S1, S0
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	SWAP
+	UNPAIR
+	XCHG S2
+	STSLICE
+	STU 256
+}
+IFELSE
+STI 1
+NEWC
+ROT
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	STU 256
+}
+IFELSE
+STBREFR
+STBREFR
+ENDC
+PUSHINT 1
+SENDRAWMSG
 .loc marketmaker.sol, 0
 
 .macro makeOrders
@@ -339,7 +751,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 74
+.loc marketmaker.sol, 97
 ENDS
 .loc marketmaker.sol, 0
 CALLREF {
@@ -355,7 +767,7 @@ THROW 0
 CALL $makeOrders_f1b71576_internal_macro$
 
 .macro makeOrders_f1b71576_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -367,16 +779,16 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 75
+.loc marketmaker.sol, 98
 GETGLOB 13
 PUSHCONT {
 	DUP
 	GTINT 0
 }
 PUSHCONT {
-	.loc marketmaker.sol, 76
+	.loc marketmaker.sol, 99
 	CALLREF {
 		CALL $_innerPrice_f88151c7_internal_macro$
 	}
@@ -386,7 +798,7 @@ PUSHCONT {
 	UFITS 128
 	ADD
 	UFITS 128
-	.loc marketmaker.sol, 77
+	.loc marketmaker.sol, 100
 	OVER
 	DEC
 	UFITS 128
@@ -396,13 +808,25 @@ PUSHCONT {
 	DICTUGET
 	THROWIFNOT 50
 	PLDU 128
-	GETGLOB 10
+	PUSHINT 0
+	GETGLOB 20
+	SECOND
+	PUSHINT 32
+	DICTUGET
+	THROWIFNOT 50
+	CALLREF {
+		LDMSGADDR
+		LDU 128
+		LDU 8
+		ENDS
+		TRIPLE
+	}
 	SECOND
 	MUL
 	UFITS 128
 	PUSHINT 10
 	DIV
-	.loc marketmaker.sol, 78
+	.loc marketmaker.sol, 101
 	GETGLOB 13
 	DEC
 	UFITS 128
@@ -413,26 +837,24 @@ PUSHCONT {
 	THROWIFNOT 50
 	PLDU 128
 	DIV
-	.loc marketmaker.sol, 79
-	GETGLOB 10
-	FIRST
+	.loc marketmaker.sol, 102
+	PUSHINT 0
 	PUSH S2
 	PAIR
 	SWAP
 	CALLREF {
 		CALL $_deployOrder_3f6f8352_internal_macro$
 	}
-	.loc marketmaker.sol, 80
+	.loc marketmaker.sol, 103
 	GETGLOB 17
-	GETGLOB 10
-	FIRST
+	PUSHINT 0
 	ROT
 	PAIR
 	CALLREF {
 		UNPAIR
 		SWAP
 		NEWC
-		STSLICE
+		STU 128
 		STU 128
 	}
 	SWAP
@@ -444,14 +866,14 @@ PUSHCONT {
 	DICTUSETB
 	PAIR
 	SETGLOB 17
-	.loc marketmaker.sol, 75
+	.loc marketmaker.sol, 98
 	DEC
 	UFITS 128
 	.loc marketmaker.sol, 0
 }
 WHILE
 DROP
-.loc marketmaker.sol, 82
+.loc marketmaker.sol, 105
 GETGLOB 13
 PUSHCONT {
 	DUP
@@ -459,7 +881,7 @@ PUSHCONT {
 }
 PUSHCONT {
 	PUSHCONT {
-		.loc marketmaker.sol, 83
+		.loc marketmaker.sol, 106
 		CALLREF {
 			CALL $_innerPrice_f88151c7_internal_macro$
 		}
@@ -472,18 +894,18 @@ PUSHCONT {
 		FITS 128
 		SUB
 		FITS 128
-		.loc marketmaker.sol, 84
+		.loc marketmaker.sol, 107
 		DUP
 		LESSINT 0
 		PUSHCONT {
-			.loc marketmaker.sol, 85
+			.loc marketmaker.sol, 108
 			DROP
 			.loc marketmaker.sol, 0
 		}
 		IFJMP
-		.loc marketmaker.sol, 87
+		.loc marketmaker.sol, 110
 		UFITS 128
-		.loc marketmaker.sol, 88
+		.loc marketmaker.sol, 111
 		OVER
 		DEC
 		UFITS 128
@@ -493,13 +915,25 @@ PUSHCONT {
 		DICTUGET
 		THROWIFNOT 50
 		PLDU 128
-		GETGLOB 11
+		PUSHINT 1
+		GETGLOB 20
+		SECOND
+		PUSHINT 32
+		DICTUGET
+		THROWIFNOT 50
+		CALLREF {
+			LDMSGADDR
+			LDU 128
+			LDU 8
+			ENDS
+			TRIPLE
+		}
 		SECOND
 		MUL
 		UFITS 128
 		PUSHINT 10
 		DIV
-		.loc marketmaker.sol, 89
+		.loc marketmaker.sol, 112
 		GETGLOB 13
 		DEC
 		UFITS 128
@@ -510,26 +944,31 @@ PUSHCONT {
 		THROWIFNOT 50
 		PLDU 128
 		DIV
-		.loc marketmaker.sol, 90
-		GETGLOB 11
-		FIRST
+		.loc marketmaker.sol, 113
+		GETGLOB 19
+		MUL
+		UFITS 128
+		.loc marketmaker.sol, 114
+		OVER
+		DIV
+		.loc marketmaker.sol, 115
+		PUSHINT 1
 		PUSH S2
 		PAIR
 		SWAP
 		CALLREF {
 			CALL $_deployOrder_3f6f8352_internal_macro$
 		}
-		.loc marketmaker.sol, 91
+		.loc marketmaker.sol, 116
 		GETGLOB 17
-		GETGLOB 11
-		FIRST
+		PUSHINT 1
 		ROT
 		PAIR
 		CALLREF {
 			UNPAIR
 			SWAP
 			NEWC
-			STSLICE
+			STU 128
 			STU 128
 		}
 		SWAP
@@ -544,7 +983,7 @@ PUSHCONT {
 		.loc marketmaker.sol, 0
 	}
 	CALLX
-	.loc marketmaker.sol, 82
+	.loc marketmaker.sol, 105
 	DEC
 	UFITS 128
 	.loc marketmaker.sol, 0
@@ -562,7 +1001,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 95
+.loc marketmaker.sol, 120
 ENDS
 .loc marketmaker.sol, 0
 CALLREF {
@@ -578,7 +1017,7 @@ THROW 0
 CALL $removeOrders_5c6849f2_internal_macro$
 
 .macro removeOrders_5c6849f2_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -590,9 +1029,9 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 96
+.loc marketmaker.sol, 121
 PUSHINT 0
 PUSHCONT {
 	DUP
@@ -604,7 +1043,7 @@ PUSHCONT {
 	LEQ
 }
 PUSHCONT {
-	.loc marketmaker.sol, 97
+	.loc marketmaker.sol, 122
 	DUP
 	UFITS 128
 	GETGLOB 17
@@ -613,7 +1052,7 @@ PUSHCONT {
 	DICTUGET
 	THROWIFNOT 50
 	CALLREF {
-		LDMSGADDR
+		LDU 128
 		LDU 128
 		ENDS
 		PAIR
@@ -621,14 +1060,14 @@ PUSHCONT {
 	CALLREF {
 		CALL $_cancelOrder_8fa90b7a_internal_macro$
 	}
-	.loc marketmaker.sol, 96
+	.loc marketmaker.sol, 121
 	INC
 	FITS 128
 	.loc marketmaker.sol, 0
 }
 WHILE
 DROP
-.loc marketmaker.sol, 99
+.loc marketmaker.sol, 124
 PUSHINT 0
 NEWDICT
 PAIR
@@ -644,7 +1083,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 102
+.loc marketmaker.sol, 128
 OVER
 PUSHCONT {
 	LDREF
@@ -652,7 +1091,7 @@ PUSHCONT {
 	CTOS
 }
 IF
-LDMSGADDR
+LDU 128
 LDU 128
 ROTREV
 PAIR
@@ -673,7 +1112,7 @@ THROW 0
 CALL $deployOrder_fc8ec546_internal_macro$
 
 .macro deployOrder_fc8ec546_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -685,9 +1124,9 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 103
+.loc marketmaker.sol, 129
 CALLREF {
 	CALL $_deployOrder_3f6f8352_internal_macro$
 }
@@ -698,47 +1137,76 @@ CALLREF {
 CALL $_deployOrder_3f6f8352_internal_macro$
 
 .macro _deployOrder_3f6f8352_internal_macro
-.loc marketmaker.sol, 110
+.loc marketmaker.sol, 136
 NOW
-PUSHINT 60
+PUSHINT 10
 UFITS 32
 MULCONST 60
 UFITS 32
 ADD
 UFITS 32
-.loc marketmaker.sol, 111
+.loc marketmaker.sol, 137
 TRUE
-FALSE
-PUSH2 S0, S3
+BLKPUSH 2, 0
+PUSH S4
 MYADDR
+GETGLOB 18
 PUSHINT 0
-DUP
 TUPLE 7
-.loc marketmaker.sol, 112
+.loc marketmaker.sol, 138
 PUSH S3
-SECOND
-ROLL 3
-MUL
-UFITS 128
-.loc marketmaker.sol, 113
-SWAP
-CALLREF {
-	CALL $getPriceSalt_90c36e66_internal_macro$
+FIRST
+EQINT 1
+PUSHCONT {
+	.loc marketmaker.sol, 138
+	FALSE
+	TRUE
+	PUSH2 S0, S4
+	MYADDR
+	GETGLOB 18
+	PUSHINT 0
+	TUPLE 7
+	NIP
+	.loc marketmaker.sol, 0
 }
+IF
+.loc marketmaker.sol, 139
+GETGLOB 11
 GETGLOB 12
 PUSH S5
 SECOND
-BLKSWAP 2, 4
-PUSHINT 0
+ROLL 4
+PUSH S6
+FIRST
+ROLL 6
+PUSH S7
+SECOND
+CALLREF {
+	CALL $getLendSellAmount_24f0c148_internal_macro$
+}
+PUSHINT 3000000000
 MYADDR
 PUSHINT 0
 ROLL 9
 FIRST
+GETGLOB 20
+SECOND
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
+FIRST
 NEWC
 STSLICECONST x62_
 STSLICE
-PUSHINT 9789369574394656757036770681243717074945
-STUR 135
+PUSHINT 3436630257133181346258276825233557188247553
+STUR 143
 ROLLREV 9
 NEWC
 STSLICECONST x00000010
@@ -779,7 +1247,7 @@ STBREFR
 STBREFR
 STBREFR
 ENDC
-PUSHINT 0
+PUSHINT 1
 SENDRAWMSG
 .loc marketmaker.sol, 0
 
@@ -792,7 +1260,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 116
+.loc marketmaker.sol, 142
 OVER
 PUSHCONT {
 	LDREF
@@ -800,7 +1268,7 @@ PUSHCONT {
 	CTOS
 }
 IF
-LDMSGADDR
+LDU 128
 LDU 128
 ROTREV
 PAIR
@@ -820,7 +1288,7 @@ THROW 0
 CALL $cancelOrder_8bd0bcf1_internal_macro$
 
 .macro cancelOrder_8bd0bcf1_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -832,9 +1300,9 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 119
+.loc marketmaker.sol, 145
 CALLREF {
 	CALL $_cancelOrder_8fa90b7a_internal_macro$
 }
@@ -845,20 +1313,36 @@ CALLREF {
 CALL $_cancelOrder_8fa90b7a_internal_macro$
 
 .macro _cancelOrder_8fa90b7a_internal_macro
-.loc marketmaker.sol, 125
+.loc marketmaker.sol, 151
 NULL
-.loc marketmaker.sol, 126
+.loc marketmaker.sol, 152
 TRUE
 PUSH S2
-FIRST
-PUSHINT 5000000000
+SECOND
+CALLREF {
+	CALL $preparePriceXchg_49c313eb_internal_macro$
+}
+PUSHINT 2000000000
 ROLL 4
+FIRST
+GETGLOB 20
+SECOND
+PUSHINT 32
+DICTUGET
+THROWIFNOT 50
+CALLREF {
+	LDMSGADDR
+	LDU 128
+	LDU 8
+	ENDS
+	TRIPLE
+}
 FIRST
 NEWC
 STSLICECONST x62_
 STSLICE
-PUSHINT 9789369574394656757036770681243717074945
-STUR 135
+PUSHINT 3274370980303967982866698814945429188247553
+STUR 143
 ROLLREV 4
 NEWC
 STSLICECONST x00000011
@@ -879,7 +1363,7 @@ PUSHCONT {
 IFELSE
 STBREFR
 ENDC
-PUSHINT 0
+PUSHINT 1
 SENDRAWMSG
 .loc marketmaker.sol, 0
 
@@ -892,7 +1376,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 130
+.loc marketmaker.sol, 156
 OVER
 PUSHCONT {
 	LDREF
@@ -917,7 +1401,7 @@ THROW 0
 CALL $sendMoney_2ff5f735_internal_macro$
 
 .macro sendMoney_2ff5f735_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -929,9 +1413,9 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 70
+.loc modifiers/modifiers.sol, 45
 OVER
-.loc modifiers/modifiers.sol, 89
+.loc modifiers/modifiers.sol, 64
 GETPARAM 7
 FIRST
 SWAP
@@ -940,7 +1424,7 @@ ADD
 UFITS 128
 GREATER
 THROWIFNOT 203
-.loc marketmaker.sol, 131
+.loc marketmaker.sol, 157
 NEWC
 STSLICECONST x42_
 STSLICE
@@ -962,7 +1446,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 136
+.loc marketmaker.sol, 161
 LDREF
 ENDS
 .loc marketmaker.sol, 0
@@ -979,7 +1463,7 @@ THROW 0
 CALL $setPriceCode_bbe9ccb6_internal_macro$
 
 .macro setPriceCode_bbe9ccb6_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -991,10 +1475,156 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 137
+.loc marketmaker.sol, 162
 SETGLOB 12
+.loc marketmaker.sol, 0
+
+.macro setPriceSaltCode
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 165
+LDREF
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $setPriceSaltCode_acfae46d_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	setPriceSaltCode_acfae46d_internal
+.type	setPriceSaltCode_acfae46d_internal, @function
+CALL $setPriceSaltCode_acfae46d_internal_macro$
+
+.macro setPriceSaltCode_acfae46d_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 166
+SETGLOB 11
+.loc marketmaker.sol, 0
+
+.macro setUserId
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 169
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 256
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $setUserId_6c282993_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	setUserId_6c282993_internal
+.type	setUserId_6c282993_internal, @function
+CALL $setUserId_6c282993_internal_macro$
+
+.macro setUserId_6c282993_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 170
+SETGLOB 18
+.loc marketmaker.sol, 0
+
+.macro setPairDecimals
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 173
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 128
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $setPairDecimals_34d71841_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	setPairDecimals_34d71841_internal
+.type	setPairDecimals_34d71841_internal, @function
+CALL $setPairDecimals_34d71841_internal_macro$
+
+.macro setPairDecimals_34d71841_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 174
+SETGLOB 19
 .loc marketmaker.sol, 0
 
 .macro setConfig
@@ -1006,7 +1636,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc marketmaker.sol, 140
+.loc marketmaker.sol, 177
 OVER
 PUSHCONT {
 	LDREF
@@ -1031,7 +1661,7 @@ THROW 0
 CALL $setConfig_cb82eb58_internal_macro$
 
 .macro setConfig_cb82eb58_internal_macro
-.loc modifiers/modifiers.sol, 69
+.loc modifiers/modifiers.sol, 44
 GETGLOB 5
 DUP
 ISNULL
@@ -1043,22 +1673,363 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 200
-.loc modifiers/modifiers.sol, 74
+.loc modifiers/modifiers.sol, 49
 ACCEPT
-.loc marketmaker.sol, 141
+.loc marketmaker.sol, 178
 SETGLOB 13
-.loc marketmaker.sol, 142
+.loc marketmaker.sol, 179
 SETGLOB 14
 .loc marketmaker.sol, 0
 
-.internal-alias onCodeUpgrade_fb00cc5e_internal, 749264623
-.internal onCodeUpgrade_fb00cc5e_internal
+.macro updateCode
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 183
+LDREF
+LDREF
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $updateCode_10aae4d5_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	updateCode_10aae4d5_internal
+.type	updateCode_10aae4d5_internal, @function
+CALL $updateCode_10aae4d5_internal_macro$
+
+.macro updateCode_10aae4d5_internal_macro
+.loc modifiers/modifiers.sol, 44
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 200
+.loc modifiers/modifiers.sol, 49
+ACCEPT
+.loc marketmaker.sol, 184
+OVER
+SETCODE
+.loc marketmaker.sol, 185
+SWAP
+CTOS
+DUP
+PUSHSLICE x8adb35
+SDEQ
+PUSHCONT {
+	PLDREFIDX 1
+	CTOS
+}
+IF
+PLDREF
+CTOS
+BLESS
+POP C3
+.loc marketmaker.sol, 186
+PUSHINT $onCodeUpgrade_0e89a1b9_internal$
+PUSH C3
+EXECUTE
+.loc marketmaker.sol, 0
+
+.internal-alias onCodeUpgrade_0e89a1b9_internal, 2083461128
+.internal onCodeUpgrade_0e89a1b9_internal
+.loc marketmaker.sol, 190
+DROP
+.loc marketmaker.sol, 191
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+SETGLOB 10
+PUSHREF {
+}
+SETGLOB 11
+PUSHREF {
+}
+SETGLOB 12
+PUSHINT 0
+SETGLOB 13
+PUSHINT 0
+SETGLOB 14
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 15
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 16
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 17
+PUSHINT 0
+SETGLOB 18
+PUSHINT 0
+SETGLOB 19
+PUSHINT 0
+NEWDICT
+PAIR
+SETGLOB 20
 .loc marketmaker.sol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
 COMMIT
 THROW 0
+
+.macro getInit
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 194
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $getInit_96c13b0e_internal_macro$
+}
+PUSH S2
+PUSHCONT {
+	PUSH S4
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 98
+	STZEROES
+	REVERSE 2, 1
+	STSLICECONST x9ba61b3f
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP2
+}
+IFELSE
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+THROW 0
+
+.globl	getInit_96c13b0e_internal
+.type	getInit_96c13b0e_internal, @function
+CALL $getInit_96c13b0e_internal_macro$
+
+.macro getInit_96c13b0e_internal_macro
+.loc marketmaker.sol, 195
+GETGLOB 15
+GETGLOB 16
+.loc marketmaker.sol, 0
+
+.macro getPriceAddr
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 198
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 128
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $getPriceAddr_ec946895_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST x9ce00362
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+THROW 0
+
+.globl	getPriceAddr_ec946895_internal
+.type	getPriceAddr_ec946895_internal, @function
+CALL $getPriceAddr_ec946895_internal_macro$
+
+.macro getPriceAddr_ec946895_internal_macro
+.loc marketmaker.sol, 199
+CALLREF {
+	CALL $preparePriceXchg_49c313eb_internal_macro$
+}
+.loc marketmaker.sol, 0
+
+.macro getPriceData
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc marketmaker.sol, 202
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 128
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $getPriceData_462b9a2d_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 2641377344
+	STUR 130
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+THROW 0
+
+.globl	getPriceData_462b9a2d_internal
+.type	getPriceData_462b9a2d_internal, @function
+CALL $getPriceData_462b9a2d_internal_macro$
+
+.macro getPriceData_462b9a2d_internal_macro
+.loc marketmaker.sol, 203
+CALLREF {
+	CALL $preparePriceXchgData_326ef661_internal_macro$
+}
+.loc marketmaker.sol, 0
+
+.macro getWallets
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 206
+ENDS
+.loc marketmaker.sol, 0
+CALLREF {
+	CALL $getWallets_db7a4605_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 4102026668
+	STUR 130
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+THROW 0
+
+.globl	getWallets_db7a4605_internal
+.type	getWallets_db7a4605_internal, @function
+CALL $getWallets_db7a4605_internal_macro$
+
+.macro getWallets_db7a4605_internal_macro
+.loc marketmaker.sol, 207
+GETGLOB 20
+.loc marketmaker.sol, 0
 
 .macro receive_macro
 GETGLOB 6
@@ -1073,6 +2044,35 @@ CALLREF {
 	CALL $c7_to_c4$
 }
 
+.macro on_bounce_macro
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 0
+DUP
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+
+.macro fallback_macro
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc marketmaker.sol, 0
+DUP
+IFREF {
+	CALL $upd_only_time_in_c4$
+}
+
 .macro c4_to_c7
 PUSHROOT
 CTOS
@@ -1082,25 +2082,12 @@ LDU 1 ; ctor flag
 NIP
 LDMSGADDR
 LDREF
-ENDS
-CTOS
-LDU 128
-LDU 8
-ROLLREV 3
-TRIPLE
-SWAP
-LDMSGADDR
-LDU 128
-LDU 8
-ROLLREV 3
-TRIPLE
-SWAP
 LDREF
-LDU 128
 LDREF
 ENDS
 CTOS
 LDU 128
+LDU 128
 LDU 32
 LDDICT
 ROTREV
@@ -1111,12 +2098,22 @@ LDDICT
 ROTREV
 PAIR
 SWAP
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SWAP
+LDU 256
+LDU 128
 LDU 32
 LDDICT
 ROTREV
 PAIR
 SWAP
 ENDS
+SETGLOB 20
+SETGLOB 19
+SETGLOB 18
 SETGLOB 17
 SETGLOB 16
 SETGLOB 15
@@ -1141,17 +2138,21 @@ PUSHCONT {
 	PUSHREFSLICE {
 		.blob x8000000000000000000000000000000000000000000000000000000000000000001_
 	}
-	PUSHINT 0
-	DUP
-	TRIPLE
-	DUP
 	PUSHREF {
 	}
+	DUP
 	PUSHINT 0
 	BLKPUSH 2, 0
 	NEWDICT
 	PAIR
 	BLKPUSH 2, 0
+	PUSHINT 0
+	BLKPUSH 2, 0
+	NEWDICT
+	PAIR
+	SETGLOB 20
+	SETGLOB 19
+	SETGLOB 18
 	SETGLOB 17
 	SETGLOB 16
 	SETGLOB 15
@@ -1169,12 +2170,19 @@ PUSHCONT {
 	SETGLOB 3
 	PUSHINT 3
 	SETGLOB 13
+	PUSHINT 1000000
+	SETGLOB 14
+	PUSHINT 10000
+	SETGLOB 19
 }
 IFREFELSE {
 	CALL $c4_to_c7$
 }
 
 .macro c7_to_c4
+GETGLOB 20
+GETGLOB 19
+GETGLOB 18
 GETGLOB 17
 GETGLOB 16
 GETGLOB 15
@@ -1189,25 +2197,13 @@ NEWC
 STU 256
 STU 64
 STONE
-SWAP
-UNTRIPLE
-REVERSE 4, 0
 STSLICE
-ROLLREV 9
-NEWC
-STU 128
-STU 8
-SWAP
-UNTRIPLE
-REVERSE 4, 0
-STSLICE
-STU 128
-STU 8
 STREF
-STU 128
-ROLLREV 4
+STREF
+ROLLREV 8
 NEWC
 STU 128
+STU 128
 SWAP
 UNPAIR
 XCHG S2
@@ -1223,7 +2219,13 @@ UNPAIR
 XCHG S2
 STU 32
 STDICT
-STBREFR
+STU 256
+STU 128
+SWAP
+UNPAIR
+XCHG S2
+STU 32
+STDICT
 STBREFR
 ENDC
 POPROOT
@@ -1266,7 +2268,14 @@ IFJMPREF {
 }
 OVER
 LDUQ 32  ; [funcId] body' ok
-THROWIFNOT 60
+PUSHCONT {
+	DROP
+	CALLREF {
+		CALL $fallback_macro$
+	}
+	THROW 0
+}
+IFNOT
 OVER
 IFNOTJMPREF {
 	GETGLOB 6
@@ -1276,7 +2285,10 @@ SWAP
 CALLREF {
 	CALL $public_function_selector$
 }
-THROW 60
+DROP2
+CALLREF {
+	CALL $fallback_macro$
+}
 
 .internal-alias :main_external, -1
 .internal :main_external
@@ -1342,82 +2354,171 @@ SWAP
 CALLREF {
 	CALL $public_function_selector$
 }
-THROW 60
+DROP2
+CALLREF {
+	CALL $fallback_macro$
+}
 
 .macro public_function_selector
-DUP
-PUSHINT 582138009
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 277445801
-	EQUAL
-	IFJMPREF {
-		CALL $setFirstWallet$
-	}
-	DUP
-	PUSHINT 352725591
-	EQUAL
-	IFJMPREF {
-		CALL $sendMoney$
-	}
-	DUP
-	PUSHINT 519071127
-	EQUAL
-	IFJMPREF {
-		CALL $setPriceCode$
-	}
-	DUP
-	PUSHINT 582138009
-	EQUAL
-	IFJMPREF {
-		CALL $cancelOrder$
-	}
-}
-DUP
-PUSHINT 1198085563
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 639422336
-	EQUAL
-	IFJMPREF {
-		CALL $removeOrders$
-	}
-	DUP
-	PUSHINT 975833324
-	EQUAL
-	IFJMPREF {
-		CALL $setConfig$
-	}
-	DUP
-	PUSHINT 991107313
-	EQUAL
-	IFJMPREF {
-		CALL $setSecondWallet$
-	}
-	DUP
-	PUSHINT 1198085563
-	EQUAL
-	IFJMPREF {
-		CALL $deployOrder$
-	}
-}
 DUP
 PUSHINT 1756716863
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 1732020652
-	EQUAL
+	PUSHINT 463870783
+	LEQ
 	IFJMPREF {
-		CALL $makeOrders$
+		DUP
+		PUSHINT 22475522
+		EQUAL
+		IFJMPREF {
+			CALL $setWallet$
+		}
+		DUP
+		PUSHINT 176078910
+		EQUAL
+		IFJMPREF {
+			CALL $clearWallet$
+		}
+		DUP
+		PUSHINT 352725591
+		EQUAL
+		IFJMPREF {
+			CALL $sendMoney$
+		}
+		DUP
+		PUSHINT 463870783
+		EQUAL
+		IFJMPREF {
+			CALL $getInit$
+		}
+	}
+	DUP
+	PUSHINT 519071127
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 480962201
+		EQUAL
+		IFJMPREF {
+			CALL $setFlexClient$
+		}
+		DUP
+		PUSHINT 484442978
+		EQUAL
+		IFJMPREF {
+			CALL $getPriceAddr$
+		}
+		DUP
+		PUSHINT 493893696
+		EQUAL
+		IFJMPREF {
+			CALL $getPriceData$
+		}
+		DUP
+		PUSHINT 519071127
+		EQUAL
+		IFJMPREF {
+			CALL $setPriceCode$
+		}
+	}
+	DUP
+	PUSHINT 975833324
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 639422336
+		EQUAL
+		IFJMPREF {
+			CALL $removeOrders$
+		}
+		DUP
+		PUSHINT 803291766
+		EQUAL
+		IFJMPREF {
+			CALL $setPairDecimals$
+		}
+		DUP
+		PUSHINT 805475044
+		EQUAL
+		IFJMPREF {
+			CALL $init$
+		}
+		DUP
+		PUSHINT 975833324
+		EQUAL
+		IFJMPREF {
+			CALL $setConfig$
+		}
 	}
 	DUP
 	PUSHINT 1756716863
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 1038408101
+		EQUAL
+		IFJMPREF {
+			CALL $setPriceSaltCode$
+		}
+		DUP
+		PUSHINT 1498911242
+		EQUAL
+		IFJMPREF {
+			CALL $bindWallets$
+		}
+		DUP
+		PUSHINT 1732020652
+		EQUAL
+		IFJMPREF {
+			CALL $makeOrders$
+		}
+		DUP
+		PUSHINT 1756716863
+		EQUAL
+		IFJMPREF {
+			CALL $constructor$
+		}
+	}
+}
+DUP
+PUSHINT 2136069134
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 2095978802
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 1835176432
+		EQUAL
+		IFJMPREF {
+			CALL $setUserId$
+		}
+		DUP
+		PUSHINT 1871649425
+		EQUAL
+		IFJMPREF {
+			CALL $cancelOrder$
+		}
+		DUP
+		PUSHINT 1954543020
+		EQUAL
+		IFJMPREF {
+			CALL $getWallets$
+		}
+		DUP
+		PUSHINT 2095978802
+		EQUAL
+		IFJMPREF {
+			CALL $updateCode$
+		}
+	}
+	DUP
+	PUSHINT 2136069134
 	EQUAL
 	IFJMPREF {
-		CALL $constructor$
+		CALL $deployOrder$
 	}
 }
 

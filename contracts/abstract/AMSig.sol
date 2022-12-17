@@ -5,7 +5,7 @@ abstract contract AMSig {
         address dest,
         uint128 value,
         bool bounce,
-        bool allBalance,
+        uint8 flags,
         TvmCell payload)
     public {}
     function submitTransaction(
