@@ -16,6 +16,19 @@ abstract contract AFlexWallet {
             uint256 code_hash,
             uint16 code_depth,
             int8 workchain_id) {}
+            
+    function details(uint32 _answer_id) public functionID(0x14)
+        returns (
+            string name, string symbol, uint8 decimals, uint128 balance,
+            uint256 root_public_key, address root_address, uint256 wallet_pubkey,
+            optional(address) owner_address,
+            optional(uint256) lend_pubkey,
+            lend_owner_array_record[] lend_owners,
+            uint128 lend_balance,
+            optional(BindInfo) binding,
+            uint256 code_hash,
+            uint16 code_depth,
+            int8 workchain_id) {}
 
     function cancelOrder(
         uint128 evers,

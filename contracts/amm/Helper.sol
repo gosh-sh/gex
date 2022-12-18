@@ -35,6 +35,28 @@ contract StockNotify is Modifiers {
                                             value0);
     }
     
+    function getCorrectData(TvmCell a) public pure returns(TvmCell){
+        TvmSlice data = a.toSlice();
+        (uint16 _w1, uint8 _w2) = data.size();
+        bool _s1 = data.decode(bool);
+        uint128 _s2 = data.decode(uint128);
+        _w1; _w2; _s1; _s2;
+        TvmBuilder p;
+        p.store(data);
+        return p.toCell();
+    }
+    
+    function getCorrectDataFull(TvmCell a, uint128 price) public pure returns(TvmCell){
+        TvmSlice data = a.toSlice();
+        (uint16 _w1, uint8 _w2) = data.size();
+        bool _s1 = data.decode(bool);
+        uint128 _s2 = data.decode(uint128);
+        _w1; _w2; _s1; _s2;
+        TvmBuilder b;
+        b.store(false, price, data);
+        return b.toCell();
+    }
+    
     receive() external {
     }
     

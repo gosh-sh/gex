@@ -13,4 +13,5 @@ abstract contract Errors {
     uint constant ERR_LOW_VALUE = 201;
     uint constant ERR_INVALID_SENDER = 202;
     uint constant ERR_LOW_BALANCE = 203;
+    uint constant ERR_WRONG_PRICE_ADDR = 204;
 }
