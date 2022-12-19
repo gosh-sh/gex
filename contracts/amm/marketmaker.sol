@@ -16,7 +16,7 @@ contract MarketMaker  is Modifiers {
     address m_FlexClient;
     TvmCell m_PriceSaltCode;
     TvmCell m_PriceCode;
-    TvmCell m_PriceDataPart;
+    TvmCell m_PriceSaltCodeAddr;
     
     uint128 _numberOrders = 3;
     uint128 _stepPrice = 1e6;
@@ -25,6 +25,8 @@ contract MarketMaker  is Modifiers {
     Order[] _price;
     uint256 _user_id;
     uint128 _pairdecimals = 1e4;
+    
+    uint128 _time = 10;
     
     uint128 _ready = 0;
     uint128 _oldprice = 0;
@@ -50,10 +52,11 @@ contract MarketMaker  is Modifiers {
             sumFib.push(sum);
         }
         _oldprice = _innerPrice();
+        _count = 4;
     }
         
     function _innerPrice() private view returns(uint128) {
-        return (_FlexWallet[0].balance * _pairdecimals) / _FlexWallet[1].balance;
+        return (_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance;
     }
          
     function setFlexClient (address client) public  onlyOwner accept {
@@ -67,17 +70,16 @@ contract MarketMaker  is Modifiers {
     }
     
     function preparePriceXchg(uint128 price_num) private view returns(address) {
-    	TvmCell stateInit = tvm.buildStateInit(m_PriceSaltCode, preparePriceXchgData(price_num));
+    	TvmCell stateInit = tvm.buildStateInit(m_PriceSaltCodeAddr, preparePriceXchgData(price_num));
         return address(tvm.hash(stateInit));
     }
     
-    function preparePriceXchgData(uint128 price_num) private view returns(TvmCell) {
-/*    	mapping(uint => uint) test;
+    function preparePriceXchgData(uint128 price_num) private pure returns(TvmCell) {
+    	mapping(uint => uint) test;
         DPriceXchgCustom price_data = DPriceXchgCustom(price_num, 0, 0, 0, test, 0, test);
-    	TvmBuilder b;
-        b.store(price_data);*/
         TvmBuilder b;
-        b.store(price_num, m_PriceDataPart);
+        b.store(false);
+        b.store(price_data);
         return b.toCell();
     }
     
@@ -127,19 +129,27 @@ contract MarketMaker  is Modifiers {
          if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
     }
     
+    function refreshOut() public onlyOwner accept {
+        refresh();
+    }
+    
     function refresh() private {
         uint128 newprice = _innerPrice();
         _count++;
         if ((newprice != _oldprice) || (_count >= 5)) {
             _oldprice = newprice;
-            removeOrders();
-            makeOrders();
+            _removeOrdersIn();
+            _makeOrdersIn();
             _count = 0;
         }
     }
     
     function makeOrders() public onlyOwner accept {
-        for (uint128 i = _numberOrders; i >= 1; i--){
+        _makeOrdersIn();
+    }
+    
+    function _makeOrdersIn() private {
+            for (uint128 i = _numberOrders; i >= 1; i--){
             uint128 nowPrice = _oldprice + _stepPrice * i;
             uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[0].balance / 10;
             nowOrder /= sumFib[_numberOrders - 1];
@@ -162,8 +172,13 @@ contract MarketMaker  is Modifiers {
     }
     
     function removeOrders() public onlyOwner accept {
+        _removeOrdersIn();
+    }
+    
+    function _removeOrdersIn() private  {
         for (int128 i = 0; i <= int128(_price.length) - 1; i++){
-            _cancelOrder(_price[uint128(i)]);
+            if (i <= int128(_price.length) / 2 - 1) {  _cancelOrder(_price[uint128(i)], true); }
+            else { _cancelOrder(_price[uint128(i)], false); }
         }
         delete _price;
     }
@@ -177,23 +192,25 @@ contract MarketMaker  is Modifiers {
     	Order price_num,
     	uint128 amount) private view {
     	uint32 m_dealTime =  uint32(1);
-        m_dealTime =uint32(now + m_dealTime * 10 * 60);
+        m_dealTime =uint32(now + m_dealTime * _time * 60);
     	FlexLendPayloadArgs args = FlexLendPayloadArgs (true, true, true, amount, address(this), _user_id, uint256(0));
     	if (price_num.index == 1) { args = FlexLendPayloadArgs (false, true, true, amount, address(this), _user_id, uint256(0)); }
     	AFlexWallet(_FlexWallet[price_num.index].wallet).makeOrder{value: 4 ton, flag: 1}(uint32(0), address(this), 3 ton, getLendSellAmount(price_num.index, amount, price_num.price), m_dealTime, price_num.price, m_PriceCode, m_PriceSaltCode, args);   
     } 
     
     function cancelOrder( 
-    	Order      price
+    	Order      price,
+    	bool isSell
     ) public view onlyOwner accept {
-        _cancelOrder(price);
+        _cancelOrder(price, isSell);
     } 
     
     function _cancelOrder(  
-    	Order price
+    	Order price,
+    	bool isSell
     ) private view {
     	optional(uint256) order_id;
-        AFlexWallet(_FlexWallet[price.index].wallet).cancelOrder{value: 3 ton, flag: 1}(2 ton, preparePriceXchg(price.price), true, order_id);   
+        AFlexWallet(_FlexWallet[price.index].wallet).cancelOrder{value: 3 ton, flag: 1}(2 ton, preparePriceXchg(price.price), isSell, order_id);   
     }
 
     
@@ -210,8 +227,8 @@ contract MarketMaker  is Modifiers {
         m_PriceSaltCode = code;
     }
     
-    function setPriceDataPart(TvmCell code) public onlyOwner accept {
-        m_PriceDataPart = code;
+    function setPriceCodeAddr(TvmCell code) public onlyOwner accept {
+        m_PriceSaltCodeAddr = code;
     }
     
     function setUserId(uint256 id) public onlyOwner accept {
@@ -229,6 +246,10 @@ contract MarketMaker  is Modifiers {
     
     function setReady(uint128 ready) public onlyOwner accept {
         _ready = ready;
+    }
+    
+    function setTime(uint128 time) public onlyOwner accept {
+        _time = time;
     }
     
     function updateCode(TvmCell newcode, TvmCell cell) public onlyOwner accept {
@@ -250,12 +271,12 @@ contract MarketMaker  is Modifiers {
         return preparePriceXchg(price);
     }
     
-    function getPriceData(uint128 price) public view returns(TvmCell) {
+    function getPriceData(uint128 price) public pure returns(TvmCell) {
         return preparePriceXchgData(price);
     }
     
     function getPriceStateInit(uint128 price) public view returns(TvmCell) {
-       return tvm.buildStateInit(m_PriceSaltCode, preparePriceXchgData(price));
+       return tvm.buildStateInit(m_PriceSaltCodeAddr, preparePriceXchgData(price));
     }
     
     function getWallets() public view returns(Wallet[]) {
@@ -263,7 +284,9 @@ contract MarketMaker  is Modifiers {
     }
 
     /* fallback/receive */
-    receive() external {
+    receive() external view {
+        tvm.accept();
+    	refreshBalance(msg.sender);
     }
     
     onBounce(TvmSlice body) external view {
@@ -273,6 +296,8 @@ contract MarketMaker  is Modifiers {
     }
 
     fallback() external view {
+        tvm.accept();
+    	refreshBalance(msg.sender);
     }
     
     /* Getters */   
