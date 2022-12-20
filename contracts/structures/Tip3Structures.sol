@@ -35,6 +35,19 @@ struct restriction_info {
   uint256 unsalted_price_code_hash; ///< PriceXchg code hash (unsalted)
 }
 
+struct Tip3Creds {
+  uint256 pubkey;
+  optional(address) owner;
+}
+
+struct Tip3Cfg {
+    string name;
+    string symbol;
+    uint8 decimals;
+    uint256 root_public_key;
+    address root_address;
+}
+
 struct FlexLendPayloadArgs {
   bool      sell;               ///< Sell order if true, buy order if false.
   bool      immediate_client;   ///< Should this order try to be executed as a client order first
