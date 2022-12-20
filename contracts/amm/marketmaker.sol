@@ -32,6 +32,8 @@ contract MarketMaker  is Modifiers {
     uint128 _oldprice = 0;
     
     uint128 _count = 0;
+    uint128 _zone;
+    uint128 _div;
     
     Wallet[] _FlexWallet;
     
@@ -158,19 +160,19 @@ contract MarketMaker  is Modifiers {
     
     function _makeOrdersIn() private {
             for (uint128 i = _numberOrders; i >= 1; i--){
-            uint128 nowPrice = _oldprice + _stepPrice * i;
-            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[0].balance / 10;
+            uint128 nowPrice = _oldprice + _zone + _stepPrice * i;
+            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[0].balance / _div;
             nowOrder /= sumFib[_numberOrders - 1];
             _deployOrder(Order(0, nowPrice), nowOrder);
             _price.push(Order(0, nowPrice));
         }
         for (uint128 i = _numberOrders; i >= 1; i--){
-            int128 nowPrice_t = int128(_oldprice) - int128(_stepPrice) * int128(i);
+            int128 nowPrice_t = int128(_oldprice) - int128(_zone) - int128(_stepPrice) * int128(i);
             if (nowPrice_t < 0){
                 continue;
             }
             uint128 nowPrice = uint128(nowPrice_t);
-            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[1].balance / 10;
+            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[1].balance / _div;
             nowOrder /= sumFib[_numberOrders - 1];
             nowOrder *= _pairdecimals;
             nowOrder /= nowPrice;
@@ -258,6 +260,14 @@ contract MarketMaker  is Modifiers {
     
     function setTime(uint128 time) public onlyOwner accept {
         _time = time;
+    }
+    
+    function setZone(uint128 zone) public onlyOwner accept {
+        _zone = zone;
+    }
+    
+    function setDivisor(uint128 div) public onlyOwner accept {
+        _div = div;
     }
     
     function updateCode(TvmCell newcode, TvmCell cell) public onlyOwner accept {

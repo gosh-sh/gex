@@ -11,5 +11,7 @@
 ./tonos-cli call 0:d63dfca928e51ec6f1d2c4b5a1a74932120fb210c5e998ddbd8587099011a72b  init '{}' --abi ../../../work/gex/contracts/amm/marketmaker.abi.json --sign surf2.json
 ./tonos-cli call 0:d63dfca928e51ec6f1d2c4b5a1a74932120fb210c5e998ddbd8587099011a72b  setReady '{"ready":1}' --abi ../../../work/gex/contracts/amm/marketmaker.abi.json --sign surf2.json
 ./tonos-cli call 0:d63dfca928e51ec6f1d2c4b5a1a74932120fb210c5e998ddbd8587099011a72b  setTime '{"time":60000}' --abi ../../../work/gex/contracts/amm/marketmaker.abi.json --sign surf2.json
+./tonos-cli call 0:d63dfca928e51ec6f1d2c4b5a1a74932120fb210c5e998ddbd8587099011a72b  setZone '{"zone":1000}' --abi ../../../work/gex/contracts/amm/marketmaker.abi.json --sign surf2.json
+./tonos-cli call 0:d63dfca928e51ec6f1d2c4b5a1a74932120fb210c5e998ddbd8587099011a72b  setDivisor '{"div":10}' --abi ../../../work/gex/contracts/amm/marketmaker.abi.json --sign surf2.json
 
 
