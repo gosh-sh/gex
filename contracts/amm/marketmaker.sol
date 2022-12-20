@@ -132,7 +132,7 @@ contract MarketMaker  is Modifiers {
         AFlexWallet(_FlexWallet[1].wallet).bind{value: 1 ton, flag: 1}(set_binding, binding, set_trader, trader);
     }
     
-    function refreshBalance(address wallet) private view {
+    function refreshBalance(address wallet) public onlyOwner accept view {
          if (_FlexWallet[0].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
          if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
     }
@@ -292,20 +292,17 @@ contract MarketMaker  is Modifiers {
     }
 
     /* fallback/receive */
-    receive() external view {
+    receive() external pure {
         tvm.accept();
-    	refreshBalance(msg.sender);
     }
     
-    onBounce(TvmSlice body) external view {
+    onBounce(TvmSlice body) external pure {
         body;
         tvm.accept();
-    	refreshBalance(msg.sender);
     }
 
-    fallback() external view {
+    fallback() external pure {
         tvm.accept();
-    	refreshBalance(msg.sender);
     }
     
     /* Getters */   
