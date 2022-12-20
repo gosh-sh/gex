@@ -93,6 +93,14 @@ contract MarketMaker  is Modifiers {
     	
     } 
     
+    function onTip3Transfer(uint128 balance, uint128 newtoken, uint128 ever_balance, Tip3Cfg config, optional(Tip3Creds) sender, Tip3Creds receiver, TvmCell payload, address answer) public accept functionID(0xca) {
+        newtoken; ever_balance; config; sender; receiver; payload; answer;
+        require(((_FlexWallet[0].wallet == msg.sender) || (_FlexWallet[0].wallet == msg.sender)),ERR_INVALID_SENDER);
+        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; }
+        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; }
+        if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
+    }
+    
     function setBalance(
             string name, string symbol, uint8 decimals, uint128 balance,
             uint256 root_public_key, address root_address, uint256 wallet_pubkey,
