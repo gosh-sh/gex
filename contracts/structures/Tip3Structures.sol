@@ -36,8 +36,8 @@ struct restriction_info {
 }
 
 struct Tip3Creds {
-  uint256     pubkey;
-  address owner;
+  uint256 pubkey;
+  optional(address) owner;
 }
 
 struct Tip3Cfg {
