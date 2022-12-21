@@ -30,6 +30,7 @@ contract MarketMaker  is Modifiers {
     
     uint128 _ready = 0;
     uint128 _oldprice = 0;
+    uint128 _divprice = 1;
     
     uint128 _count = 0;
     uint128 _zone;
@@ -58,7 +59,7 @@ contract MarketMaker  is Modifiers {
     }
         
     function _innerPrice() private view returns(uint128) {
-        return (_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance;
+        return (((_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance) / _divprice) * _divprice;
     }
          
     function setFlexClient (address client) public  onlyOwner accept {
@@ -115,8 +116,8 @@ contract MarketMaker  is Modifiers {
             uint16 code_depth,
             int8 workchain_id) public accept functionID(100) {
         name; symbol; decimals; root_public_key; root_address; wallet_pubkey; owner_address; lend_pubkey; lend_owners; lend_balance; binding; code_hash; code_depth; workchain_id;
-        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; }
-        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; }
+        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; if (_ready == 1) { AFlexWallet(_FlexWallet[1].wallet).details{value: 1 ton}(100); }}
+        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; if (_ready == 1) { AFlexWallet(_FlexWallet[0].wallet).details{value: 1 ton}(100); }}
         if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     } 
     
@@ -135,8 +136,8 @@ contract MarketMaker  is Modifiers {
     }
     
     function refreshBalance(address wallet) public onlyOwner accept view {
-         if (_FlexWallet[0].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
-         if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
+         if (_FlexWallet[0].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); return; } 
+         if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); return; } 
     }
     
     function refreshOut() public onlyOwner accept {
@@ -249,9 +250,10 @@ contract MarketMaker  is Modifiers {
         _pairdecimals = dec;
     }
     
-    function setConfig(uint128 step, uint128 number) public onlyOwner accept {
+    function setConfig(uint128 step, uint128 number, uint128 divprice) public onlyOwner accept {
         _numberOrders = number;
         _stepPrice = step;
+        _divprice = divprice;
     }
     
     function setReady(uint128 ready) public onlyOwner accept {
