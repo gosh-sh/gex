@@ -30,6 +30,7 @@ contract MarketMaker  is Modifiers {
     
     uint128 _ready = 0;
     uint128 _oldprice = 0;
+    uint128 _divprice = 1;
     
     uint128 _count = 0;
     uint128 _zone;
@@ -58,7 +59,7 @@ contract MarketMaker  is Modifiers {
     }
         
     function _innerPrice() private view returns(uint128) {
-        return (_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance;
+        return (((_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance) / _divprice) * _divprice;
     }
          
     function setFlexClient (address client) public  onlyOwner accept {
@@ -96,10 +97,28 @@ contract MarketMaker  is Modifiers {
     } 
     
     function onTip3Transfer(uint32 answer_id, uint128 balance, uint128 newtoken, uint128 ever_balance, Tip3Cfg config, optional(Tip3Creds) sender, Tip3Creds receiver, TvmCell payload, address answer) public accept functionID(0xca) {
-        answer_id; newtoken; ever_balance; config; sender; receiver; payload; answer;
+        answer_id; newtoken; ever_balance; config; sender; receiver; answer;      
+        TvmSlice data = payload.toSlice();
+        bool sender_sell = data.decode(bool);
+        bool sender_taker = data.decode(bool);
+        uint256 sender_user_id = data.decode(uint256);
+        uint256 receiver_user_id = data.decode(uint256);
+        uint256 receiver_order_id = data.decode(uint256);
+        data = data.loadRefAsSlice();
+        address another_tip3_root = data.decode(address);
+        uint128 price_num = data.decode(uint128);
+        sender_sell; sender_taker; sender_user_id; receiver_user_id; receiver_order_id; another_tip3_root;
         require(((_FlexWallet[0].wallet == msg.sender) || (_FlexWallet[1].wallet == msg.sender)),ERR_INVALID_SENDER);
-        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; }
-        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; }
+        if (_FlexWallet[0].wallet == msg.sender) { 
+        	uint128 change = balance - _FlexWallet[0].balance; 
+        	_FlexWallet[0].balance = balance; 
+        	_FlexWallet[1].balance -= change * price_num / _pairdecimals;
+        }
+        if (_FlexWallet[1].wallet == msg.sender) { 
+        	uint128 change = balance - _FlexWallet[1].balance; 
+        	_FlexWallet[1].balance = balance; 
+        	_FlexWallet[0].balance -= change * _pairdecimals / price_num;        	
+        }
         if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     }
     
@@ -115,8 +134,8 @@ contract MarketMaker  is Modifiers {
             uint16 code_depth,
             int8 workchain_id) public accept functionID(100) {
         name; symbol; decimals; root_public_key; root_address; wallet_pubkey; owner_address; lend_pubkey; lend_owners; lend_balance; binding; code_hash; code_depth; workchain_id;
-        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; }
-        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; }
+        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; if (_ready == 1) { AFlexWallet(_FlexWallet[1].wallet).details{value: 1 ton}(100); }}
+        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; if (_ready == 1) { AFlexWallet(_FlexWallet[0].wallet).details{value: 1 ton}(100); }}
         if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     } 
     
@@ -135,8 +154,8 @@ contract MarketMaker  is Modifiers {
     }
     
     function refreshBalance(address wallet) public onlyOwner accept view {
-         if (_FlexWallet[0].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
-         if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); } 
+         if (_FlexWallet[0].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); return; } 
+         if (_FlexWallet[1].wallet == wallet) { AFlexWallet(wallet).details{value: 1 ton}(100); return; } 
     }
     
     function refreshOut() public onlyOwner accept {
@@ -249,9 +268,10 @@ contract MarketMaker  is Modifiers {
         _pairdecimals = dec;
     }
     
-    function setConfig(uint128 step, uint128 number) public onlyOwner accept {
+    function setConfig(uint128 step, uint128 number, uint128 divprice) public onlyOwner accept {
         _numberOrders = number;
         _stepPrice = step;
+        _divprice = divprice;
     }
     
     function setReady(uint128 ready) public onlyOwner accept {
