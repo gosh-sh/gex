@@ -97,10 +97,28 @@ contract MarketMaker  is Modifiers {
     } 
     
     function onTip3Transfer(uint32 answer_id, uint128 balance, uint128 newtoken, uint128 ever_balance, Tip3Cfg config, optional(Tip3Creds) sender, Tip3Creds receiver, TvmCell payload, address answer) public accept functionID(0xca) {
-        answer_id; newtoken; ever_balance; config; sender; receiver; payload; answer;
+        answer_id; newtoken; ever_balance; config; sender; receiver; answer;      
+        TvmSlice data = payload.toSlice();
+        bool sender_sell = data.decode(bool);
+        bool sender_taker = data.decode(bool);
+        uint256 sender_user_id = data.decode(uint256);
+        uint256 receiver_user_id = data.decode(uint256);
+        uint256 receiver_order_id = data.decode(uint256);
+        data = data.loadRefAsSlice();
+        address another_tip3_root = data.decode(address);
+        uint128 price_num = data.decode(uint128);
+        sender_sell; sender_taker; sender_user_id; receiver_user_id; receiver_order_id; another_tip3_root;
         require(((_FlexWallet[0].wallet == msg.sender) || (_FlexWallet[1].wallet == msg.sender)),ERR_INVALID_SENDER);
-        if (_FlexWallet[0].wallet == msg.sender) { _FlexWallet[0].balance = balance; }
-        if (_FlexWallet[1].wallet == msg.sender) { _FlexWallet[1].balance = balance; }
+        if (_FlexWallet[0].wallet == msg.sender) { 
+        	uint128 change = balance - _FlexWallet[0].balance; 
+        	_FlexWallet[0].balance = balance; 
+        	_FlexWallet[1].balance -= change * price_num / _pairdecimals;
+        }
+        if (_FlexWallet[1].wallet == msg.sender) { 
+        	uint128 change = balance - _FlexWallet[1].balance; 
+        	_FlexWallet[1].balance = balance; 
+        	_FlexWallet[0].balance -= change * _pairdecimals / price_num;        	
+        }
         if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     }
     
