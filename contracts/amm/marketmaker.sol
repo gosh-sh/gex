@@ -112,12 +112,12 @@ contract MarketMaker  is Modifiers {
         if (_FlexWallet[0].wallet == msg.sender) { 
         	uint128 change = balance - _FlexWallet[0].balance; 
         	_FlexWallet[0].balance = balance; 
-        	_FlexWallet[1].balance -= change * price_num / _pairdecimals;
+        	_FlexWallet[1].balance -= (change * price_num / _pairdecimals)  * 10000 / 10015;
         }
         if (_FlexWallet[1].wallet == msg.sender) { 
         	uint128 change = balance - _FlexWallet[1].balance; 
         	_FlexWallet[1].balance = balance; 
-        	_FlexWallet[0].balance -= change * _pairdecimals / price_num;        	
+        	_FlexWallet[0].balance -= (change * _pairdecimals / price_num) * 10000 / 10015;        	
         }
         if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     }
