@@ -11,7 +11,7 @@ pragma AbiHeader pubkey;
 
 import "./modifiers/modifiers.sol";
 
-contract MarketMaker  is Modifiers {
+contract MarketTest  is Modifiers {
     string constant version = "0.0.1";
     TvmCell m_PriceSaltCode;
     TvmCell m_PriceCode;
