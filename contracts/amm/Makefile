@@ -1,4 +1,4 @@
-tvcs = marketmaker stocknotify Helper
+tvcs = marketmaker stocknotify Helper markettester
 tvcc = MMClient
 clean:
 	rm -f *.tvc *.abi.json *.code
