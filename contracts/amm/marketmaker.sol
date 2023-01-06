@@ -13,58 +13,66 @@ import "./modifiers/modifiers.sol";
 
 contract MarketMaker  is Modifiers {
     string constant version = "0.0.1";
-    address m_FlexClient;
     TvmCell m_PriceSaltCode;
     TvmCell m_PriceCode;
     TvmCell m_PriceSaltCodeAddr;
     
-    uint128 _numberOrders = 3;
-    uint128 _stepPrice = 1e6;
-    uint128[] fibNumber;
-    uint128[] sumFib;
+    Deal[1000] _deals;
+    uint128 _point = 0;
+    uint128 _volume = 0;
+    uint128 _volumeold;
+    uint128[10] _volume10;
+    uint128[100] _volume100;
+    
     Order[] _price;
     uint256 _user_id;
     uint128 _pairdecimals = 1e4;
     
-    uint128 _time = 10;
+    uint128 _time = 6e4;
     
     uint128 _ready = 0;
     uint128 _oldprice = 0;
-    uint128 _divprice = 1;
     
     uint128 _count = 0;
-    uint128 _zone;
-    uint128 _div;
+    uint128 _zone = 1e3;
+    uint128 _div = 100;
+    
+    address _notify;
     
     Wallet[] _FlexWallet;
     
     constructor() public onlyOwner accept {
     }
     
-    function init() public onlyOwner accept {
-        delete fibNumber;
-        delete sumFib;
-        uint128 sum = 2;
-        fibNumber.push(1);
-        fibNumber.push(1);
-        sumFib.push(1);
-        sumFib.push(2);
-        for (uint128 i = 2; i < 20; i++){
-            fibNumber.push(fibNumber[i - 1] + fibNumber[i - 2]);
-            sum += fibNumber[i];
-            sumFib.push(sum);
-        }
-        _oldprice = _innerPrice();
-        _count = 4;
+    function notifyDeal(uint128 price, uint128 amount, uint128 time) public senderIs(_notify) accept {
+        time;
+        _volumeold = _volume;
+        _volume -= _deals[_point].amount;
+        _volume10[_deals[_point].price / _pairdecimals] -= _deals[_point].amount;
+        _volume100[_deals[_point].price * 10 / _pairdecimals] -= _deals[_point].amount;
+        _volume += amount;
+        _volume10[price / _pairdecimals] -= amount;
+        _volume100[price * 10 / _pairdecimals] -= amount;    
+        _innerPrice();
     }
         
-    function _innerPrice() private view returns(uint128) {
-        return (((_FlexWallet[1].balance * _pairdecimals) / _FlexWallet[0].balance) / _divprice) * _divprice;
+    function _innerPrice() private returns(uint128) {
+        uint128 need = _volume / 2;
+        uint128 index = 0;
+        uint128 bal = 0;
+        for (uint128 i = 0; i < 10; i++){
+            bal += _volume10[i];
+            index = i; 
+            if (bal > need) { bal -= _volume10[i]; break; }
+        }
+        uint128 index1;
+        for (uint128 i = index * 10; i < index * 10 + 10; i++){
+            bal += _volume100[i];
+            index1 = i; 
+            if (bal > need) { break; }
+        }
+        if (index1 != _oldprice) { _oldprice = index1; _removeOrdersIn(); _makeOrdersIn(); }
     }
-         
-    function setFlexClient (address client) public  onlyOwner accept {
-    	m_FlexClient = client;
-    } 
     
     function getLendSellAmount(uint128 index, uint128 value, uint128 price) private view returns(uint128) {
         uint128 res = value;
@@ -89,11 +97,9 @@ contract MarketMaker  is Modifiers {
     function setWallet (address wallet, uint8 decimals) public  onlyOwner accept {
         Wallet FlexWallet;
     	FlexWallet.wallet = wallet;
-    	FlexWallet.balance = 0;
     	FlexWallet.decimals = decimals;
     	_FlexWallet.push(FlexWallet);
-    	AFlexWallet(FlexWallet.wallet).details{value: 1 ton}(uint32(100));
-    	
+    	AFlexWallet(FlexWallet.wallet).details{value: 1 ton}(uint32(100));    	
     } 
     
     function onTip3Transfer(uint32 answer_id, uint128 balance, uint128 newtoken, uint128 ever_balance, Tip3Cfg config, optional(Tip3Creds) sender, Tip3Creds receiver, TvmCell payload, address answer) public accept functionID(0xca) {
@@ -119,7 +125,6 @@ contract MarketMaker  is Modifiers {
         	_FlexWallet[1].balance = balance; 
         	_FlexWallet[0].balance -= (change * _pairdecimals / price_num) * 10000 / 10015;        	
         }
-        if ((_FlexWallet.length == 2) && (_ready == 1)) { refresh(); }
     }
     
     function setBalance(
@@ -178,26 +183,22 @@ contract MarketMaker  is Modifiers {
     }
     
     function _makeOrdersIn() private {
-            for (uint128 i = _numberOrders; i >= 1; i--){
-            uint128 nowPrice = _oldprice + _zone + _stepPrice * i;
-            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[0].balance / _div;
-            nowOrder /= sumFib[_numberOrders - 1];
-            _deployOrder(Order(0, nowPrice), nowOrder);
-            _price.push(Order(0, nowPrice));
+        if (_oldprice == 0) { return; }
+        if (_oldprice >= 9) { return; }
+        uint128 nowPrice = _oldprice + _zone;
+        uint128 nowOrder = _FlexWallet[0].balance / _div + _volume * 15 / 10000;
+        _deployOrder(Order(0, nowPrice), nowOrder);
+        _price.push(Order(0, nowPrice));
+        int128 nowPrice_t = int128(_oldprice) - int128(_zone);
+        if (nowPrice_t < 0){
+            return;
         }
-        for (uint128 i = _numberOrders; i >= 1; i--){
-            int128 nowPrice_t = int128(_oldprice) - int128(_zone) - int128(_stepPrice) * int128(i);
-            if (nowPrice_t < 0){
-                continue;
-            }
-            uint128 nowPrice = uint128(nowPrice_t);
-            uint128 nowOrder = fibNumber[i - 1] * _FlexWallet[1].balance / _div;
-            nowOrder /= sumFib[_numberOrders - 1];
-            nowOrder *= _pairdecimals;
-            nowOrder /= nowPrice;
-            _deployOrder(Order(1, nowPrice), nowOrder);
-            _price.push(Order(1, nowPrice));
-        }
+        nowPrice = uint128(nowPrice_t);
+        nowOrder = _FlexWallet[1].balance / _div  + _volume * 15 / 10000;
+        nowOrder *= _pairdecimals;
+        nowOrder /= nowPrice;
+        _deployOrder(Order(1, nowPrice), nowOrder);
+        _price.push(Order(1, nowPrice));
     }
     
     function removeOrders() public onlyOwner accept {
@@ -268,12 +269,6 @@ contract MarketMaker  is Modifiers {
         _pairdecimals = dec;
     }
     
-    function setConfig(uint128 step, uint128 number, uint128 divprice) public onlyOwner accept {
-        _numberOrders = number;
-        _stepPrice = step;
-        _divprice = divprice;
-    }
-    
     function setReady(uint128 ready) public onlyOwner accept {
         _ready = ready;
     }
@@ -290,6 +285,10 @@ contract MarketMaker  is Modifiers {
         _div = div;
     }
     
+    function setNotify(address notify) public onlyOwner accept {
+        _notify = notify;
+    }
+    
     function updateCode(TvmCell newcode, TvmCell cell) public onlyOwner accept {
         tvm.setcode(newcode);
         tvm.setCurrentCode(newcode);
@@ -300,11 +299,7 @@ contract MarketMaker  is Modifiers {
         cell;
         tvm.resetStorage();   
     }
-    
-    function getInit() public view returns(uint128[], uint128[]) {
-        return (fibNumber, sumFib);
-    }
-    
+        
     function getPriceAddr(uint128 price) public view returns(address) {
         return preparePriceXchg(price);
     }

@@ -9,23 +9,16 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 pragma AbiHeader time;
 import "./modifiers/modifiers.sol";
-
-struct Tip3Config {
-  string  name;         ///< Token name.
-  string  symbol;       ///< Token short symbol.
-  uint8   decimals;     ///< Decimals for ui purposes. ex: balance 100 with decimals 2 will be printed as 1.00.
-  uint256 root_pubkey;  ///< Public key of RootTokenContract (or Wrapper) for the tip3 token.
-  address root_address; ///< Address of RootTokenContract (or Wrapper) for the tip3 token.
-}
+import "marketmaker.sol";
 
 contract StockNotify is Modifiers {
     string constant version = "0.0.1";
-    address m_superRoot;
+    optional(address) m_amm;
+    TvmCell m_PriceSaltCodeAddr;
 
-    constructor (address superRoot) public {
+    constructor () public {
         require(msg.pubkey() == tvm.pubkey(), 101);
 		tvm.accept();
-        m_superRoot = superRoot;
     }
 
     function upgrade(TvmCell state) public virtual {
@@ -43,6 +36,8 @@ contract StockNotify is Modifiers {
     }
 
     function checkAndTransfer() internal view inline  {
+        if (address(this).balance > 101 ever)
+            m_amm.get().transfer(100 ever);
     }
 
     function onXchgDealCompleted(
@@ -50,13 +45,14 @@ contract StockNotify is Modifiers {
         address    pair,            ///< Address of XchgPair contract
         address    tip3root_major,  ///< Address of RootTokenContract for the major tip3 token
         address    tip3root_minor,  ///< Address of RootTokenContract for the minor tip3 token
-        Tip3Config major_tip3cfg,   ///< Major tip3 configuration
-        Tip3Config minor_tip3cfg,   ///< Minor tip3 configuration
+        Tip3Cfg major_tip3cfg,   ///< Major tip3 configuration
+        Tip3Cfg minor_tip3cfg,   ///< Minor tip3 configuration
         uint128    price_num,       ///< Token price numerator
         uint128    price_denum,     ///< Token price denominator
         uint128    amount           ///< Amount of major tip3 tokens in the deal
-    ) public view functionID(10) {
-        checkAndTransfer();
+    ) public view functionID(10) senderIs(preparePriceXchg(price_num)) accept {
+        seller_is_taker; pair; tip3root_major; tip3root_minor; major_tip3cfg; minor_tip3cfg; price_denum;
+        MarketMaker(m_amm.get()).notifyDeal{value: 0.03 ever}(price_num, amount, now);
     }
 
     function onXchgOrderAdded(
@@ -67,7 +63,8 @@ contract StockNotify is Modifiers {
       uint128 price_denum,    ///< Token price denominator
       uint128 amount,         ///< Amount of major tip3 tokens added in the order
       uint128 sum_amount      ///< Summarized amount of major tokens rest in all orders for this price (sell or buy only)
-    ) public view functionID(11) {
+    ) public view functionID(11) senderIs(preparePriceXchg(price_num)) accept {
+        sell; tip3root_major; tip3root_minor; price_denum; amount; sum_amount;
         checkAndTransfer();
     }
 
@@ -79,8 +76,31 @@ contract StockNotify is Modifiers {
       uint128 price_denum,    ///< Token price denominator
       uint128 amount,         ///< Amount of major tip3 tokens canceled
       uint128 sum_amount      ///< Summarized amount of major tokens rest in all orders for this price (sell or buy only)
-    ) public view functionID(12) {
+    ) public view functionID(12) senderIs(preparePriceXchg(price_num)) accept {
+        sell; tip3root_major; tip3root_minor; price_denum; amount; sum_amount;
         checkAndTransfer();
+    }
+    
+    function preparePriceXchgData(uint128 price_num) private pure returns(TvmCell) {
+    	mapping(uint => uint) test;
+        DPriceXchgCustom price_data = DPriceXchgCustom(price_num, 0, 0, 0, test, 0, test);
+        TvmBuilder b;
+        b.store(false);
+        b.store(price_data);
+        return b.toCell();
+    }
+    
+    function preparePriceXchg(uint128 price_num) private view returns(address) {
+    	TvmCell stateInit = tvm.buildStateInit(m_PriceSaltCodeAddr, preparePriceXchgData(price_num));
+        return address(tvm.hash(stateInit));
+    }
+    
+    function setAmm(address amm) public onlyOwner accept {
+        m_amm = amm;
+    }
+    
+    function setPriceCodeAddr(TvmCell code) public onlyOwner accept {
+        m_PriceSaltCodeAddr = code;
     }
 }
 

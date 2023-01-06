@@ -24,6 +24,11 @@ struct Order {
     uint128 price;
 }
 
+struct Deal {
+    uint128 amount;
+    uint128 price;
+}
+
 struct DPriceXchgCustom {
     uint128 price_num_;    
     uint128 sells_amount_; 
